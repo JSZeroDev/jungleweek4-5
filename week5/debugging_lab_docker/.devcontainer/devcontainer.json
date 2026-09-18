@@ -1,0 +1,32 @@
+{
+  "name": "Jungle Week 5 - Memory Debug Challenge",
+  "build": {
+    "dockerfile": "../Dockerfile",
+    "context": ".."
+  },
+
+  // gdb/ptrace 가 컨테이너 안에서 정상 동작하도록 권한 부여.
+  "runArgs": ["--cap-add=SYS_PTRACE", "--security-opt", "seccomp=unconfined"],
+
+  // 저장소 전체를 연결해 Git과 형제 폴더에 접근하고, week5 프로젝트에서 시작합니다.
+  "workspaceMount": "\"source=${localWorkspaceFolder}/../..\",target=/workspaces/jungleweek4-5,type=bind",
+  "workspaceFolder": "/workspaces/jungleweek4-5/week5/debugging_lab_docker",
+
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "ms-vscode.cpptools",
+        "ms-vscode.cpptools-extension-pack",
+        "ms-vscode.makefile-tools"
+      ],
+      "settings": {
+        "C_Cpp.default.compilerPath": "/usr/bin/gcc",
+        "C_Cpp.default.cStandard": "c11",
+        "terminal.integrated.defaultProfile.linux": "bash"
+      }
+    }
+  },
+
+  // 컨테이너 생성 후 툴 버전 확인(선택).
+  "postCreateCommand": "git config --global --add safe.directory /workspaces/jungleweek4-5 && gcc --version | head -1; gdb --version | head -1"
+}

@@ -1,7 +1,10 @@
 {
-    "name": "C Development Container",
+    "name": "Jungle Week 4 - Data Structures",
     "dockerFile": "Dockerfile",
     "remoteUser": "jungle",
+    "postCreateCommand": "git config --global --add safe.directory /workspaces/jungleweek4-5",
+    "workspaceMount": "\"source=${localWorkspaceFolder}/../..\",target=/workspaces/jungleweek4-5,type=bind",
+    "workspaceFolder": "/workspaces/jungleweek4-5/week4/data_structures_docker",
     "customizations": {
         "vscode": {
             "extensions": [
