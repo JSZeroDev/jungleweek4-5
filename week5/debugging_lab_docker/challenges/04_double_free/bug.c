@@ -93,7 +93,7 @@ static Rec *find_by_id(Directory *d, int id) {
 
 static void directory_dump(Directory *d) {
     printf("by id:  ");
-    for (int i = 0; i < d->count; i++) printf("%d:%s ", d->by_id[i]->id, d->by_id[i]->name);
+    for (int i = 0; i < d->count; i++) printf("%d:%s ", d->by_id[i]->id,  d->by_id[i]->name);
     printf("\nby name:");
     for (int i = 0; i < d->count; i++) printf(" %s(%d)", d->by_name[i]->name, d->by_name[i]->id);
     printf("\n");
@@ -102,11 +102,14 @@ static void directory_dump(Directory *d) {
 static void directory_free(Directory *d) {
     for (int i = 0; i < d->count; i++) {
         free(d->by_id[i]->name);
-        free(d->by_id[i]);                 
+        free(d->by_id[i]);
+        d->by_id[i] = NULL;
     }
-    for (int i = 0; i < d->count; i++) {
-        free(d->by_name[i]);               
-    }
+    //     for (int i = 0; i < d->count-1; i++) {
+    //     free(d->by_name[i]);
+    //     d->by_name[i] = NULL;
+    // }
+    
     d->count = 0;
 }
 
