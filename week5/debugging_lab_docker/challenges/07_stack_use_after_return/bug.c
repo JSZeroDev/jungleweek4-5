@@ -47,21 +47,25 @@ typedef struct {
 } LineView;
 
 /* 결과를 뷰에 채운다(포인터를 함수 경계 너머로 옮겨 -Wdangling 을 회피하는 형태) */
-static void view_set(LineView *out, char **arr, int n) {
-    out->lines = arr;
-    out->count = n;
-}
+// 기존 view_set()은 lines와 count를 설정했지만,
+// 이제 main에서 v.lines가 parts를 가리키도록 미리 설정한다.
+// split_lines()에서는 out->lines에 각 줄의 주소를 직접 저장하고,
+// 마지막에 out->count에 줄 개수 n을 저장하므로 view_set()은 필요하지 않다.
+// static void view_set(LineView *out, char **arr, int n) {
+//     out->lines = arr;
+//     out->count = n;
+// }
 
-static void split_lines(LineView *out, char *text) {
-    char *parts[MAX_LINES];              
+static void split_lines(LineView *out, char *text) {         
     int n = 0;
     /* strtok는 새로 할당하지 않고, 넘겨받은 문자열 내부의 주소를 돌려준다. 
     * 따라서, strtok은 원본 버퍼를 제자리에서 수정한다. 
     */
-    for (char *ln = strtok(text, "\n"); ln && n < MAX_LINES; ln = strtok(NULL, "\n"))
-        parts[n++] = ln;
-
-    view_set(out, parts, n);      
+    for (char *ln = strtok(text, "\n"); ln && n < MAX_LINES; ln = strtok(NULL, "\n")){
+        out->lines[n++] = ln;
+    }
+        out->count = n;
+    // view_set(out, out->lines, n);      
 
     /* TODO 상기 코드를 수정하여 결과를 호출자가 준 out 에 직접 채운다(값 반환 아님, 지역 주소 반환 아님). */       
 }
@@ -77,8 +81,9 @@ static void warm_stack(void) {
 
 int main(void) {
     char text[] = "alpha\nbeta\ngamma";
-
     LineView v;
+    char *parts[MAX_LINES]; 
+    v.lines = parts;
     split_lines(&v, text);               
     warm_stack();                        
 
