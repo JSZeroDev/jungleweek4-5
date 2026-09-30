@@ -60,8 +60,19 @@ static void eb_init(EditBuffer *e) {
     if (!e->clipboard) { perror("malloc"); exit(1); }
 }
 
+// 기존 코드
+// static void eb_snapshot(EditBuffer *e) {
+//     if (e->undo_n < MAX_UNDO) e->undo[e->undo_n++] = e->data;
+// }
+
+// 수정 후 코드
 static void eb_snapshot(EditBuffer *e) {
-    if (e->undo_n < MAX_UNDO) e->undo[e->undo_n++] = e->data;
+    if (e->undo_n < MAX_UNDO) {
+        e->undo[e->undo_n++] = malloc(e->len * sizeof(int));
+        if (!e->undo[e->undo_n-1]) { perror("malloc"); exit(1); }
+        memcpy(e->undo[e->undo_n-1], e->data, e->len * sizeof(int));
+
+    }
 }
 
 static void eb_grow(EditBuffer *e, size_t need) {
@@ -83,9 +94,11 @@ static void eb_free(EditBuffer *e) {
     free(e->clipboard);
     for (int i = 0; i < e->undo_n; i++) {
         free(e->undo[i]);           
+        e->undo[i] = NULL;
     }
     e->undo_n = 0;
     e->data = NULL;
+    e->clipboard = NULL;
 }
 
 int main(void) {
